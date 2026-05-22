@@ -9,7 +9,7 @@ metadata:
   type: skill
   target_os: [ubuntu-22.04, ubuntu-24.04, debian-12, debian-13]
   target_arch: [amd64, arm64]
-version: 1.0.1
+version: 1.1.0
 ---
 
 # OpenClaw 全自动部署 Skill
@@ -105,25 +105,60 @@ SET_NPM_PROXY="false"
 ### D. 镜像加速参数
 
 ```bash
-# APT 镜像（国内默认 USTC，海外可改为官方源）
-APT_MIRROR="https://mirrors.ustc.edu.cn"
+# ============================================================
+# 镜像源选择 — 根据服务器地理位置选择最快的镜像站
+# ============================================================
+# 预设：
+#   auto    — 自动测速选择（推荐）
+#   ustc    — 中国科学技术大学（合肥，华东/华中快）
+#   tsinghua— 清华大学 TUNA（北京，华北快）
+#   aliyun  — 阿里云（杭州，华东/全国快）
+#   nju     — 南京大学（南京，华东快）
+#   sjtu    — 上海交通大学（上海，华东快）
+#   bfsu    — 北京外国语大学（北京，华北快）
+#   tencent — 腾讯云（广州，华南快）
+#   huawei  — 华为云（全国快，不限地域）
+#   direct  — 不换源，使用官方源（海外服务器）
+# ============================================================
+MIRROR_PRESET="auto"
+
+# APT 镜像 URL（auto 模式会自动测速选择，manual 模式手动填写）
+# auto 模式下留空即可，部署时会自动检测最快的镜像站
+APT_MIRROR=""
 
 # 是否将 security 源也换到镜像站（可能有同步延迟）
 MIRROR_SECURITY_SOURCE="true"
 
-# PyPI 镜像
-PIP_INDEX="https://mirrors.ustc.edu.cn/pypi/simple"
+# PyPI 镜像（auto 模式自动匹配）
+PIP_INDEX=""
 
 # npm 镜像（USTC 反代或 npmmirror）
-NPM_REGISTRY="https://npmreg.proxy.ustclug.org"
+NPM_REGISTRY=""
 NPM_FALLBACK_REGISTRY="https://registry.npmmirror.com"
 
-# Docker 镜像加速器（逗号分隔）
-DOCKER_MIRRORS="https://docker.mirrors.ustc.edu.cn,https://docker.nju.edu.cn,https://docker.1ms.run"
+# Docker 镜像加速器（auto 模式自动匹配，逗号分隔）
+DOCKER_MIRRORS=""
 
 # Node.js 下载镜像（npmmirror 在国内可直接访问）
 NODE_MIRROR="https://npmmirror.com/mirrors/node"
 ```
+
+**镜像站速查表：**
+
+| 预设 | 镜像站 | APT | PyPI | npm | Docker | 推荐地区 |
+|------|--------|-----|------|-----|--------|----------|
+| `ustc` | 中科大 | mirrors.ustc.edu.cn | ✅ | ✅ | ✅ | 合肥/华东/华中 |
+| `tsinghua` | 清华 TUNA | mirrors.tuna.tsinghua.edu.cn | ✅ | ❌ | ✅ | 北京/华北 |
+| `aliyun` | 阿里云 | mirrors.aliyun.com | ✅ | ❌ | ✅ | 杭州/全国 |
+| `nju` | 南京大学 | mirrors.nju.edu.cn | ✅ | ❌ | ✅ | 南京/华东 |
+| `sjtu` | 上海交大 | mirrors.sjtug.sjtu.edu.cn | ✅ | ❌ | ✅ | 上海/华东 |
+| `bfsu` | 北外 | mirrors.bfsu.edu.cn | ✅ | ❌ | ❌ | 北京/华北 |
+| `tencent` | 腾讯云 | mirrors.tencent.com | ❌ | ❌ | ❌ | 广州/华南 |
+| `huawei` | 华为云 | mirrors.huaweicloud.com | ✅ | ❌ | ❌ | 全国 |
+| `direct` | 官方源 | archive.ubuntu.com / deb.debian.org | ❌ | ❌ | ❌ | 海外 |
+
+> **建议**：华东地区优先 `ustc`/`nju`，华北优先 `tsinghua`/`bfsu`，华南优先 `tencent`/`aliyun`。
+> `auto` 模式会自动 ping 测速选最快的。海外服务器直接用 `direct`。
 
 ### E. LLM Provider 配置
 
