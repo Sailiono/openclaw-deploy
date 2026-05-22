@@ -1,0 +1,19 @@
+# Never commit files that might contain secrets
+*.env
+*.secret
+*.key
+*.pem
+credentials.json
+secrets.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
